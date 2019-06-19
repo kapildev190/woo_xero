@@ -16,7 +16,7 @@
     ini_set('display_startup_errors', 1);
     error_reporting(E_ALL);
 
-/*add_action( 'user_new_form', 'crf_admin_registration_form' );
+add_action( 'user_new_form', 'crf_admin_registration_form' );
 function crf_admin_registration_form( $operation ) {
     if ( 'add-new-user' !== $operation ) {
         // $operation may also be 'add-existing-user'
@@ -42,10 +42,9 @@ function crf_admin_registration_form( $operation ) {
         </tr>
     </table>
     <?php
-}*/
+}
 
 add_action( 'show_user_profile', 'crf_show_extra_profile_fields' );
-add_action( 'add_user_profile', 'crf_show_extra_profile_fields' );
 add_action( 'edit_user_profile', 'crf_show_extra_profile_fields' );
 
 function crf_show_extra_profile_fields( $user ) {
@@ -85,20 +84,17 @@ function crf_user_profile_update_errors( $errors, $update, $user ) {
 }
 
 
-add_action( 'personal_options_update', 'crf_add_profile_fields' );
-add_action( 'edit_user_profile_update', 'crf_add_profile_fields' );
 
-function crf_add_profile_fields( $user_id ) {
+add_action( 'user_register', 'crf_add_profile_fields', 10, 1 );
 
-    if ( ! current_user_can( 'edit_user', $user_id ) ) {
-        return false;
-    }
+function crf_add_profile_fields( $user_id ) {    
 
-    if ( ! empty( $_POST['payment_term'] ) && intval( $_POST['payment_term'] ) < 365 ) {
+       if ( ! empty( $_POST['payment_term'] ) ) {
        
         add_user_meta( $user_id, 'payment_term', intval( $_POST['payment_term'] ) );
         
-    }
+    }    
+
 }
 
 add_action( 'personal_options_update', 'crf_update_profile_fields' );
@@ -116,6 +112,8 @@ function crf_update_profile_fields( $user_id ) {
         
     }
 }
+
+
 
 
 add_action( 'woocommerce_before_checkout_process', 'initiate_order' , 10, 1 );
